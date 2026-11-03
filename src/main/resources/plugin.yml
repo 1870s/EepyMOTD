@@ -1,0 +1,32 @@
+name: EepyMOTD
+version: '${version}'
+main: at.eepy.motd.EepyMotdPlugin
+api-version: '${apiVersion}'
+description: Server list MOTD, hover and icons for eepy - mc.eepy.at
+author: eepy
+website: https://eepy.at
+softdepend:
+  - PlaceholderAPI
+
+# Commands are registered with Paper's Brigadier API, see EepyMotdCommand.
+permissions:
+  eepymotd.admin:
+    description: Full access to all EepyMOTD commands.
+    default: op
+    children:
+      eepymotd.reload: true
+      eepymotd.set: true
+      eepymotd.maintenance: true
+      eepymotd.debug: true
+  eepymotd.reload:
+    description: Reload the EepyMOTD configuration.
+    default: op
+  eepymotd.set:
+    description: Choose the shown design or rotation mode, and preview designs.
+    default: op
+  eepymotd.maintenance:
+    description: Toggle the maintenance MOTD.
+    default: op
+  eepymotd.debug:
+    description: Show technical information about EepyMOTD.
+    default: op

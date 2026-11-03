@@ -1,0 +1,292 @@
+# ╭──────────────────────────────────────────────────────────────────────────╮
+# │                              E e p y M O T D                             │
+# │            server list design for mc.eepy.at · matches EepyTab           │
+# ╰──────────────────────────────────────────────────────────────────────────╯
+#
+# Texts use MiniMessage: https://docs.advntr.dev/minimessage/format.html
+# Classic colour codes (&a, &l, &#RRGGBB) work too and are converted.
+#
+# The server list shows TWO lines of about 270 pixels each. Longer lines wrap
+# and push the rest out of view; /eepymotd reload warns about lines that are
+# probably too wide. Pixel widths are estimated for the default Minecraft font.
+#
+# Apply changes with /eepymotd reload. A file with a YAML error is rejected and
+# the previous configuration stays active.
+#
+# ── Placeholders ──────────────────────────────────────────────────────────────
+#   {online} {max}          players online (real count) and shown slots
+#   {server} {ip} {website} {discord}     from "branding"
+#   {version}               the server's Minecraft version, e.g. 26.1.2
+#   {time} {date} {weekday} {year}        local time, see "placeholders"
+#   {event}                 name of the active event (empty if none)
+#   {event_ends}            time left of the active event, e.g. "2d 5h"
+#   {maintenance_ends}      time left of scheduled maintenance, or "soon"
+#   %papi_placeholder%      PlaceholderAPI, server-wide placeholders only
+#                           (a server list ping has no player), see below
+#
+# ── Colour tags (same palette as EepyTab) ─────────────────────────────────────
+#   <primary> <secondary> <highlight> <text> <muted> <subtle> <line>
+#   <good> <warn> <bad>     defined under "palette"
+
+config-version: 1
+
+# ── Branding & server information ─────────────────────────────────────────────
+branding:
+  server-name: "eepy"
+  ip: "mc.eepy.at"
+  website: "eepy.at"
+  discord: "dsc.gg/muezza"
+
+palette:
+  primary: "#B98CFF"     # soft violet
+  secondary: "#8DB6FF"   # soft blue
+  highlight: "#F3EEFF"   # near white with a lavender tint
+  text: "#DCD3F5"        # body text
+  muted: "#9C93BD"       # labels
+  subtle: "#6F6890"      # secondary info
+  line: "#4B4566"        # dividers and dots
+  good: "#8EE8C0"        # mint
+  warn: "#FFD48A"        # warm sand
+  bad: "#FF8FA3"         # soft rose
+
+# ── Layout ────────────────────────────────────────────────────────────────────
+layout:
+  # Pad lines with spaces so they appear centred in the server list.
+  center: true
+  # Usable width of one MOTD line in pixels (vanilla client: about 270).
+  line-width: 270
+  # Convert classic &-codes (&a, &l, &#RRGGBB) to MiniMessage.
+  legacy-colors: true
+
+# ── MOTD designs ──────────────────────────────────────────────────────────────
+# Each design has two lines. Optional per design:
+#   icon:  name of an icon in plugins/EepyMOTD/icons (without .png)
+#   hover: lines shown when hovering the player count (replaces "hover.lines")
+designs:
+  # The eepy look: spaced title in the EepyTab gradient, tagline, then the
+  # address and Discord. Chosen as the standard design.
+  default:
+    line1: "<gradient:#C9A6FF:#8DB6FF><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <text>cozy minecraft community</text>"
+    line2: "<muted>Play at</muted> <highlight>{ip}</highlight>  <line>•</line>  <muted>Discord</muted> <primary>{discord}</primary>"
+
+  community:
+    line1: "<gradient:#C9A6FF:#8DB6FF><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <text>survival · friends · events</text>"
+    line2: "<text>Grab a blanket and join the cozy crew</text> <primary>☾</primary>"
+
+  discord:
+    line1: "<gradient:#C9A6FF:#8DB6FF><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <text>news, events & support</text>"
+    line2: "<muted>Join our Discord</muted> <line>›</line> <primary><bold>{discord}</bold></primary>"
+
+  website:
+    line1: "<gradient:#C9A6FF:#8DB6FF><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <text>rules, guides & updates</text>"
+    line2: "<muted>Visit our website</muted> <line>›</line> <secondary><bold>{website}</bold></secondary>"
+
+  # Made for events: {event} and {event_ends} are only filled while an event runs.
+  event:
+    line1: "<gradient:#C9A6FF:#8DB6FF><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <warn><bold>EVENT</bold></warn> <text>live now</text>"
+    line2: "<text>{event}</text> <line>·</line> <muted>ends in</muted> <highlight>{event_ends}</highlight>"
+
+  maintenance:
+    line1: "<gradient:#9C93BD:#6F6890><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <gradient:#FFD48A:#FFB86B><bold>MAINTENANCE</bold></gradient>"
+    line2: "<text>Back soon</text> <line>·</line> <muted>updates on</muted> <primary>{discord}</primary>"
+    icon: eepy-maintenance
+
+  christmas:
+    line1: "<gradient:#EAF4FF:#8DB6FF>❄ <bold>e e p y</bold> ❄</gradient>  <line>│</line>  <text>merry christmas!</text>"
+    line2: "<text>Cozy winter days on</text> <highlight>{ip}</highlight> <secondary>✧</secondary>"
+    icon: eepy-winter
+
+  newyear:
+    line1: "<gradient:#FFD48A:#C9A6FF><bold>✧ e e p y ✧</bold></gradient>  <line>│</line>  <text>happy new year!</text>"
+    line2: "<text>Welcome to</text> <warn><bold>{year}</bold></warn> <text>— let's make it cozy</text>"
+    icon: eepy-winter
+
+  halloween:
+    line1: "<gradient:#FFB86B:#B98CFF><bold>☾ e e p y ☾</bold></gradient>  <line>│</line>  <text>spooky season</text>"
+    line2: "<text>Creepy nights on</text> <highlight>{ip}</highlight> <warn>✦</warn>"
+    icon: eepy-halloween
+
+  summer:
+    line1: "<gradient:#FFD48A:#8DB6FF>☀ <bold>e e p y</bold> ☀</gradient>  <line>│</line>  <text>summer event</text>"
+    line2: "<text>Sunny days and summer fun on</text> <highlight>{ip}</highlight>"
+
+  anniversary:
+    line1: "<gradient:#C9A6FF:#FFD48A><bold>✦ e e p y ✦</bold></gradient>  <line>│</line>  <warn>anniversary week</warn>"
+    line2: "<text>Thank you for being part of eepy</text> <primary>♥</primary>"
+
+# ── Rotation ──────────────────────────────────────────────────────────────────
+# Which design is shown when no maintenance or event is active.
+#   STATIC     = always "static"
+#   RANDOM     = a random design from "pool" on every server list refresh
+#   SEQUENTIAL = the designs of "pool" in order
+#   SCHEDULED  = the first matching entry of "schedule", otherwise "static"
+rotation:
+  mode: STATIC
+  static: default
+  pool: [default, community, discord, website]
+  # SEQUENTIAL only: 0 = next design on every refresh, otherwise seconds per design.
+  sequential-interval-seconds: 0
+  # SCHEDULED only. days: MONDAY ... SUNDAY (empty = every day). from/to: HH:mm
+  # (to before from = until the next day).
+  schedule:
+    - design: community
+      days: [FRIDAY, SATURDAY]
+      from: "18:00"
+      to: "02:00"
+    - design: discord
+      from: "12:00"
+      to: "14:00"
+
+# ── Seasonal events ───────────────────────────────────────────────────────────
+# Active automatically between start and end; override the rotation and end
+# by themselves. Dates: "MM-dd" (every year) or "yyyy-MM-dd" (once), each
+# optionally followed by a time "HH:mm". An end date without time includes
+# the whole day. When several events overlap, the highest priority wins.
+events:
+  christmas:
+    enabled: true
+    name: "Christmas"
+    start: "12-18"
+    end: "12-27"
+    designs: [christmas]
+    icon: eepy-winter
+    priority: 10
+  newyear:
+    enabled: true
+    name: "New Year"
+    start: "12-31 18:00"
+    end: "01-02"
+    designs: [newyear]
+    icon: eepy-winter
+    priority: 20
+  halloween:
+    enabled: true
+    name: "Halloween"
+    start: "10-24"
+    end: "11-01"
+    designs: [halloween]
+    icon: eepy-halloween
+    priority: 10
+  summer:
+    enabled: false
+    name: "Summer Event"
+    start: "07-01"
+    end: "08-31"
+    designs: [summer]
+    priority: 5
+  anniversary:
+    enabled: false
+    name: "Anniversary"
+    # Set your server's birthday here.
+    start: "06-01"
+    end: "06-07"
+    designs: [anniversary]
+    priority: 15
+  community-event:
+    enabled: false
+    name: "Build Contest"
+    start: "2026-12-05 18:00"
+    end: "2026-12-12 20:00"
+    designs: [event]
+    priority: 30
+
+# ── Maintenance ───────────────────────────────────────────────────────────────
+# Toggle with /eepymotd maintenance on|off (saved in data.yml) or schedule it.
+# By default this ONLY changes the server list. Blocking joins is a separate
+# option below and is off unless you enable it.
+maintenance:
+  design: maintenance
+  icon: eepy-maintenance
+  hover:
+    - "&6&lMaintenance"
+    - ""
+    - "&7We are working on the server."
+    - "&7News: &ddsc.gg/muezza"
+  # Optional text shown instead of the ping bars, e.g. "&6⚠ Maintenance".
+  # Note: clients then also mark the server as an incompatible version.
+  version-label: ""
+  # Planned maintenance windows ("yyyy-MM-dd HH:mm"); active automatically.
+  schedule: []
+  #  - start: "2026-11-10 02:00"
+  #    end: "2026-11-10 04:00"
+  block-joins:
+    # true = players without bypass are refused while maintenance is active.
+    enabled: false
+    kick-message: "<gradient:#C9A6FF:#8DB6FF><bold>eepy</bold></gradient> <line>│</line> <warn>Maintenance</warn><newline><newline><text>We'll be back soon.</text><newline><muted>Updates:</muted> <primary>{discord}</primary>"
+    # Operators may always join. Add more players by name or UUID.
+    bypass-ops: true
+    bypass-players: []
+
+# ── Player count & hover ──────────────────────────────────────────────────────
+player-count:
+  # Shown slot count. -1 = the server's real max-players.
+  max-players: -1
+  # true = show "???" instead of numbers.
+  hide-counts: false
+  # Do not count players hidden by vanish plugins ("vanished" metadata).
+  exclude-vanished: true
+
+# Lines shown when hovering the player count. Only the 16 classic colours
+# work here (the client renders these lines as plain legacy text); hex colours
+# are reduced to the nearest classic colour automatically.
+hover:
+  enabled: true
+  lines:
+    - "&d&l✦ eepy &8│ &7cozy minecraft"
+    - ""
+    - "&7Website  &b{website}"
+    - "&7Discord  &d{discord}"
+    - "&7Server   &f{ip}"
+    - ""
+    - "&8{online} of {max} players online"
+  # Also list real online players below the lines (never vanished ones).
+  show-online-players: false
+  max-online-players: 8
+
+# ── Server icons ──────────────────────────────────────────────────────────────
+# Put PNG files into plugins/EepyMOTD/icons/. The bundled ones are copied
+# there on first start: eepy, eepy-maintenance, eepy-winter, eepy-halloween.
+icons:
+  enabled: true
+  # Icon when the design/event has none. "server" = keep server-icon.png.
+  default: eepy
+  # Scale images that are not 64×64 (otherwise they are skipped with a warning).
+  resize: true
+
+# ── Dynamic placeholders ──────────────────────────────────────────────────────
+placeholders:
+  timezone: "Europe/Vienna"
+  time-format: "HH:mm"
+  date-format: "dd.MM.yyyy"
+  placeholderapi:
+    enabled: true
+    # Server-wide %placeholders% are resolved on the main thread every N
+    # seconds and cached; pings never call PlaceholderAPI directly.
+    refresh-seconds: 10
+    # Used when PlaceholderAPI is missing or returns nothing.
+    missing-value: ""
+
+# ── Performance & compatibility ───────────────────────────────────────────────
+performance:
+  # Rendered MOTDs are cached by their input values (design, counts, time).
+  cache-size: 64
+
+compatibility:
+  # When EepyMOTD handles the ping: LOWEST, LOW, NORMAL, HIGH, HIGHEST.
+  # Later (higher) priorities overwrite earlier plugins.
+  listener-priority: HIGH
+  warn-about-other-motd-plugins: true
+
+# ── Messages ──────────────────────────────────────────────────────────────────
+messages:
+  prefix: "<gradient:#C9A6FF:#8DB6FF><bold>eepy</bold></gradient> <line>»</line> "
+  reload-success: "<good>Configuration reloaded</good> <subtle>in <ms>ms · <icons> icon(s) loaded.</subtle>"
+  reload-warnings: "<warn><count> warning(s) while loading. See the console for details.</warn>"
+  reload-failed: "<bad>Reload failed:</bad> <text><error></text> <subtle>The previous configuration stays active.</subtle>"
+  design-set: "<text>Now always showing design <primary><design></primary>.</text>"
+  unknown-design: "<bad>Unknown design</bad> <text><design></text><subtle>. Available: <designs></subtle>"
+  mode-set: "<text>Rotation mode is now <primary><mode></primary>.</text>"
+  reset: "<text>Back to the rotation from config.yml (<primary><mode></primary>).</text>"
+  maintenance-enabled: "<warn>Maintenance MOTD enabled.</warn> <subtle><joins></subtle>"
+  maintenance-disabled: "<good>Maintenance MOTD disabled.</good>"
+  maintenance-status: "<text>Maintenance MOTD is <primary><state></primary>.</text>"
